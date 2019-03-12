@@ -798,6 +798,9 @@ class Message(six.with_metaclass(_MessageClass, object)):
       value = getattr(self, name)
       if value is None:
         if field.required:
+          import logging
+          logging.exception("Message %s is missing required field %s" % (type(self).__name__, name))
+          logging.exception("--> {}".format(self))
           raise ValidationError("Message %s is missing required field %s" %
                                 (type(self).__name__, name))
       else:
@@ -814,6 +817,9 @@ class Message(six.with_metaclass(_MessageClass, object)):
         except ValidationError as err:
           if not hasattr(err, 'message_name'):
             err.message_name = type(self).__name__
+          import logging
+          logging.exception(err)
+          logging.exception("--> {}".format(self))
           raise
 
   def is_initialized(self):
@@ -1279,6 +1285,7 @@ class Field(six.with_metaclass(_FieldMeta, object)):
       return result
 
 
+
   def validate_element(self, value):
     """Validate single element of field.
 
@@ -1302,19 +1309,19 @@ class Field(six.with_metaclass(_FieldMeta, object)):
       if value is None:
         if self.required:
           import logging
-          logging.debug("Required field {} is missing".format(self.name))
-          logging.debug("--> {}".format(self))
+          logging.exception("Required field {} is missing".format(self.name))
+          logging.exception("--> {}".format(self))
           raise ValidationError('Required field is missing')
       else:
         try:
           name = self.name
         except AttributeError:
           import logging
-          logging.debug('Expected type %s for %s, '
+          logging.exception('Expected type %s for %s, '
                                 'found %s (type %s)' %
                                 (self.type, self.__class__.__name__,
                                  value, type(value)))
-          logging.debug("--> {}".format(self))
+          logging.exception("--> {}".format(self))
 
           raise ValidationError('Expected type %s for %s, '
                                 'found %s (type %s)' %
@@ -1322,10 +1329,10 @@ class Field(six.with_metaclass(_FieldMeta, object)):
                                  value, type(value)))
         else:
           import logging
-          logging.debug('Expected type %s for field %s, '
+          logging.exception('Expected type %s for field %s, '
                                 'found %s (type %s)' %
                                 (self.type, name, value, type(value)))
-          logging.debug("--> {}".format(self))
+          logging.exception("--> {}".format(self))
 
           raise ValidationError('Expected type %s for field %s, '
                                 'found %s (type %s)' %
@@ -1356,9 +1363,19 @@ class Field(six.with_metaclass(_FieldMeta, object)):
             try:
               name = self.name
             except AttributeError:
+              import logging
+              logging.exception('Repeated values for %s '
+                            'may not be None' % self.__class__.__name__)
+              logging.exception("--> {}".format(self))
+
               raise ValidationError('Repeated values for %s '
                                     'may not be None' % self.__class__.__name__)
             else:
+              import logging
+              logging.exception('Repeated values for field %s '
+                                    'may not be None' % name)
+              logging.exception("--> {}".format(self))
+
               raise ValidationError('Repeated values for field %s '
                                     'may not be None' % name)
           result.append(validate_element(element))
@@ -1367,9 +1384,18 @@ class Field(six.with_metaclass(_FieldMeta, object)):
         try:
           name = self.name
         except AttributeError:
+          import logging
+          logging.exception('%s is repeated. Found: %s' % (
+            self.__class__.__name__, value))
+          logging.exception("--> {}".format(self))
+
           raise ValidationError('%s is repeated. Found: %s' % (
             self.__class__.__name__, value))
         else:
+          import logging
+          logging.exception('Field %s is repeated. Found: %s' % (name, value))
+          logging.exception("--> {}".format(self))
+
           raise ValidationError('Field %s is repeated. Found: %s' % (name,
                                                                      value))
     return value
