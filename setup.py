@@ -18,7 +18,7 @@
 
 import platform
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # Configure the required packages and scripts to install, depending on
 # Python version and OS.
@@ -46,7 +46,7 @@ setup(
     author='Google Inc.',
     author_email='rafek@google.com',
     # Contained modules and scripts.
-    packages=packages,
+    packages=find_packages(exclude=["demos", "experimental"],
     entry_points={
         'console_scripts': CONSOLE_SCRIPTS,
     },
