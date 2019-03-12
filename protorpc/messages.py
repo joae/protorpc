@@ -1278,6 +1278,7 @@ class Field(six.with_metaclass(_FieldMeta, object)):
     else:
       return result
 
+
   def validate_element(self, value):
     """Validate single element of field.
 
@@ -1300,19 +1301,36 @@ class Field(six.with_metaclass(_FieldMeta, object)):
 
       if value is None:
         if self.required:
+          import logging
+          logging.debug("Required field {} is missing".format(self.name))
+          logging.debug("--> {}".format(self))
           raise ValidationError('Required field is missing')
       else:
         try:
           name = self.name
         except AttributeError:
+          import logging
+          logging.debug('Expected type %s for %s, '
+                                'found %s (type %s)' %
+                                (self.type, self.__class__.__name__,
+                                 value, type(value)))
+          logging.debug("--> {}".format(self))
+
           raise ValidationError('Expected type %s for %s, '
                                 'found %s (type %s)' %
                                 (self.type, self.__class__.__name__,
                                  value, type(value)))
         else:
+          import logging
+          logging.debug('Expected type %s for field %s, '
+                                'found %s (type %s)' %
+                                (self.type, name, value, type(value)))
+          logging.debug("--> {}".format(self))
+
           raise ValidationError('Expected type %s for field %s, '
                                 'found %s (type %s)' %
                                 (self.type, name, value, type(value)))
+
     return value
 
   def __validate(self, value, validate_element):
