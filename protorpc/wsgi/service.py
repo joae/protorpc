@@ -182,6 +182,9 @@ def service_mapping(service_factory, service_path=r'.*', protocols=None):
       response = method(instance, request)
       encoded_response = protocol.encode_message(response)
     except remote.ApplicationError as err:
+      logging.exception('remote.ApplicationError from ProtoRPC '
+                        'method implementation: %s (%s)' %
+                        (err.__class__.__name__, err))      
       return send_rpc_error(six.moves.http_client.BAD_REQUEST,
                             remote.RpcState.APPLICATION_ERROR,
                             unicode(err),
