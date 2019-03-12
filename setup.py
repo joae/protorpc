@@ -46,7 +46,7 @@ setup(
     author='Google Inc.',
     author_email='rafek@google.com',
     # Contained modules and scripts.
-    packages=find_packages(exclude=["demos", "experimental"],
+    packages=find_packages(exclude=["demos", "experimental"]),
     entry_points={
         'console_scripts': CONSOLE_SCRIPTS,
     },
