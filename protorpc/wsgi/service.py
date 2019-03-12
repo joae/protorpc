@@ -133,6 +133,7 @@ def service_mapping(service_factory, service_path=r'.*', protocols=None):
         status_code,
         content_type=protocol.default_content_type,
         content=encoded_status)
+      logging.exception("method send_rpc_error status_code:{}\n state:{}\n message:{}\n error_name{}\n".format(status_code, state, message, error_name))
       return error_handler(environ, start_response)
 
     method = remote_methods.get(method_name)
